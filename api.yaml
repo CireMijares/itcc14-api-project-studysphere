@@ -1,0 +1,562 @@
+openapi: 3.0.4
+info:
+  title: StudySphere API
+  version: 1.0.0
+  description: >
+    A RESTful API for managing class announcements, lessons, assignments,
+    notes, reminders, and comments. StudySphere organizes all class-related
+    communication and materials in one centralized online platform.
+
+servers:
+  - url: http://localhost:5000
+    description: Local development
+    
+tags:
+  - name: Subject
+  - name: Announcement
+  - name: Feed
+
+paths:
+
+  /subject:
+    get:
+      tags: [Subject]
+      summary: Get all subjects/classes
+      responses:
+        '200':
+          description: List of subjects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subject'
+    post:
+      tags: [Subject]
+      summary: Create a subject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubjectCreate'
+      responses:
+        '201':
+          description: Subject created
+
+  /subject/{id}:
+    get:
+      tags: [Subject]
+      summary: Get a subject by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Subject found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+        '404':
+          description: Subject not found
+
+    put:
+      tags: [Subject]
+      summary: Update a subject
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubjectCreate'
+      responses:
+        '200':
+          description: Subject updated
+
+    delete:
+      tags: [Subject]
+      summary: Delete a subject
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Subject deleted
+
+
+  /subject/{id}/announcement:
+    get:
+      tags: [Subject]
+      summary: List announcements for a subject
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of announcements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Announcement'
+
+    post:
+      tags: [Subject]
+      summary: Create an announcement
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementCreate'
+      responses:
+        '201':
+          description: Announcement created
+
+  /announcement/{id}:
+    get:
+      tags: [Announcement]
+      summary: Get announcement details
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Announcement found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Announcement'
+        '404':
+          description: Not found
+
+    put:
+      tags: [Announcement]
+      summary: Update an announcement
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementCreate'
+      responses:
+        '200':
+          description: Announcement updated
+
+    delete:
+      tags: [Announcement]
+      summary: Delete an announcement
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+
+
+  /announcement/{id}/comments:
+    get:
+      tags: [Announcement]
+      summary: List comments under an announcement
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+
+    post:
+      tags: [Announcement]
+      summary: Add a comment
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentCreate'
+      responses:
+        '201':
+          description: Comment added
+
+
+  /subject/{id}/materials:
+    get:
+      tags: [Subject]
+      summary: List materials for a subject
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of materials
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Material'
+    post:
+      tags: [Subject]
+      summary: Upload a material (PDF/video/note)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaterialCreate'
+      responses:
+        '201':
+          description: Material uploaded
+
+
+  /subject/{id}/assignments:
+    get:
+      tags: [Subject]
+      summary: List assignments for a subject
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of assignments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Assignment'
+
+    post:
+      tags: [Subject]
+      summary: Create an assignment
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentCreate'
+      responses:
+        '201':
+          description: Assignment created
+
+
+  /subject/{id}/reminders:
+    get:
+      tags: [Subject]
+      summary: List reminders for a subject
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of reminders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reminder'
+
+    post:
+      tags: [Subject]
+      summary: Create a reminder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderCreate'
+      responses:
+        '201':
+          description: Reminder created
+
+
+  /feed/latest:
+    get:
+      tags: [Feed]
+      summary: Get latest announcements, materials, and notes across all subjects
+      responses:
+        '200':
+          description: Latest posts feed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeedItem'
+
+
+  /feed/upcoming-deadlines:
+    get:
+      tags: [Feed]
+      summary: Get upcoming assignment deadlines and reminders
+      responses:
+        '200':
+          description: Deadline feed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeadlineItem'
+
+
+components:
+  schemas:
+
+    Subject:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        teacher:
+          type: string
+
+    SubjectCreate:
+      type: object
+      required: [name, teacher]
+      properties:
+        name:
+          type: string
+        teacher:
+          type: string
+
+
+    Announcement:
+      type: object
+      properties:
+        id:
+          type: integer
+        subject_id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        date_posted:
+          type: string
+          format: date-time
+
+    AnnouncementCreate:
+      type: object
+      required: [title, content]
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        announcement_id:
+          type: integer
+        user:
+          type: string
+        content:
+          type: string
+        date_posted:
+          type: string
+          format: date-time
+
+    CommentCreate:
+      type: object
+      required: [user, content]
+      properties:
+        user:
+          type: string
+        content:
+          type: string
+
+
+    Material:
+      type: object
+      properties:
+        id:
+          type: integer
+        subject_id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        file_url:
+          type: string
+        date_uploaded:
+          type: string
+          format: date-time
+
+    MaterialCreate:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        file_url:
+          type: string
+
+
+    Assignment:
+      type: object
+      properties:
+        id:
+          type: integer
+        subject_id:
+          type: integer
+        title:
+          type: string
+        instructions:
+          type: string
+        due_date:
+          type: string
+          format: date
+
+    AssignmentCreate:
+      type: object
+      required: [title, due_date]
+      properties:
+        title:
+          type: string
+        instructions:
+          type: string
+        due_date:
+          type: string
+          format: date
+
+    Reminder:
+      type: object
+      properties:
+        id:
+          type: integer
+        subject_id:
+          type: integer
+        message:
+          type: string
+        remind_at:
+          type: string
+          format: date-time
+
+    ReminderCreate:
+      type: object
+      required: [message, remind_at]
+      properties:
+        message:
+          type: string
+        remind_at:
+          type: string
+          format: date-time
+
+    FeedItem:
+      type: object
+      properties:
+        type:
+          type: string
+          example: announcement
+        title:
+          type: string
+        preview:
+          type: string
+        subject:
+          type: string
+        date_posted:
+          type: string
+          format: date-time
+
+    DeadlineItem:
+      type: object
+      properties:
+        type:
+          type: string
+          example: assignment
+        title:
+          type: string
+        due_date:
+          type: string
+          format: date
+        subject:
+          type: string
+
